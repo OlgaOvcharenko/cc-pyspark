@@ -10,22 +10,20 @@ from sparkcc import CCSparkJob
 class TagCountJob(CCSparkJob):
     """ Count HTML tag names in Common Crawl WARC files"""
 
-    name = "TagCount"
+    name = "doc_count"
 
-    # match HTML tags (element names) on binary HTML data
-    html_tag_pattern = re.compile(b'<([a-z0-9]+)')
+    doc_link_pattern = re.compile(b"\.doc")
 
-    def process_record(self, record):
-        if record.rec_type != 'response':
-            # skip over WARC request or metadata records
-            return
-        if not self.is_html(record):
-            # skip non-HTML or unknown content types
-            return
-        data = record.content_stream().read()
-        counts = Counter(TagCountJob.html_tag_pattern.findall(data))
-        for tag, count in counts.items():
-            yield tag.decode('ascii').lower(), count
+    # def process_record(self, record):
+    #     data = record.content_stream().read()
+    #     counts = Counter(TagCountJob.doc_link_pattern.findall(data))
+    #     for tag, count in counts.items():
+    #         yield tag.decode('ascii').lower(), count
+
+    def run_job(self, session):
+        input_data = session.sparkContext.textFile(self.args.input, minPartitions=self.args.num_input_partitions)
+        df = input_data.map(lambda x: (x, )).toDF()
+        df.show()
 
 
 if __name__ == '__main__':

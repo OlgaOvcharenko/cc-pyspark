@@ -174,7 +174,7 @@ class CCSparkJob(object):
         """Run the job"""
         self.args = self.parse_arguments()
 
-        builder = SparkSession.builder.appName(self.name)
+        builder = SparkSession.builder.appName(self.name)  # FIXME
 
         if self.args.spark_profiler:
             builder.config("spark.python.profile", "true")
