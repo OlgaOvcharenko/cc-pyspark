@@ -13,7 +13,8 @@ class TagCountJob(CCSparkJob):
     name = "TagCount"
 
     # match HTML tags (element names) on binary HTML data
-    html_tag_pattern = re.compile(b'<([a-z0-9]+)')
+    # html_tag_pattern = re.compile(b"((www|http:|https:)+[^\s]+[\w]\.(doc|docx))")
+    html_tag_pattern = re.compile(b"(('|\")(www|http:|https:)+[^\s]+[\w]\.(doc|docx)' | \")")
 
     def process_record(self, record):
         if record.rec_type != 'response':
@@ -25,10 +26,14 @@ class TagCountJob(CCSparkJob):
         data = record.content_stream().read()
         counts = Counter(TagCountJob.html_tag_pattern.findall(data))
         for tag, count in counts.items():
+            tag = tag[0]
             yield tag.decode('ascii').lower(), count
 
 
 if __name__ == '__main__':
+    # html_tag_pattern = re.compile(b"((www|http:|https:)+[^\s]+[\w]\.(doc|docx))")
+    # print(html_tag_pattern.findall(b"https: sjvhskjdv doc http://dqdq/qdq/wdq.doc"))
+    # exit()
     spark = SparkSession.builder.master("local[8]") \
         .appName("count_tags") \
         .config("spark.driver.memory", "9g").getOrCreate()

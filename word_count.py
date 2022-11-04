@@ -33,7 +33,7 @@ class WordCountJob(CCSparkJob):
         if not self.is_wet_text_record(record):
             return
         data = record.content_stream().read().decode('utf-8')
-        print(data)
+        data.show()
         words = map(lambda w: w.lower(),
                     WordCountJob.word_pattern.findall(data))
         for word, count in Counter(words).items():

@@ -8,22 +8,24 @@ from sparkcc import CCSparkJob
 
 
 class TagCountJob(CCSparkJob):
-    """ Count HTML tag names in Common Crawl WARC files"""
+    """ Count doc files and their names in Common Crawl WARC files"""
 
     name = "doc_count"
+    # doc_patern = pattern = re.compile(b"((www|http:|https:)+[^\s]+[\w]\.(doc|docx))")
+    doc_pattern = re.compile(b"(('|\")(www|http:|https:)+[^\s]+[\w]\.(doc|docx)('|\"))")
 
-    doc_link_pattern = re.compile(b"\.doc")
-
-    # def process_record(self, record):
-    #     data = record.content_stream().read()
-    #     counts = Counter(TagCountJob.doc_link_pattern.findall(data))
-    #     for tag, count in counts.items():
-    #         yield tag.decode('ascii').lower(), count
-
-    def run_job(self, session):
-        input_data = session.sparkContext.textFile(self.args.input, minPartitions=self.args.num_input_partitions)
-        df = input_data.map(lambda x: (x, )).toDF()
-        df.show()
+    def process_record(self, record):
+        if record.rec_type != 'response':
+            # skip over WARC request or metadata records
+            return
+        if not self.is_html(record):
+            # skip non-HTML or unknown content types
+            return
+        data = record.content_stream().read()
+        counts = Counter(TagCountJob.doc_pattern.findall(data))
+        for tag, count in counts.items():
+            tag = tag[0]
+            yield tag.decode('ascii').lower(), count
 
 
 if __name__ == '__main__':

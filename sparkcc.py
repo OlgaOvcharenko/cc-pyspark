@@ -211,6 +211,9 @@ class CCSparkJob(object):
     def run_job(self, session):
         input_data = session.sparkContext.textFile(self.args.input,
                                                    minPartitions=self.args.num_input_partitions)
+        # dataColl = input_data.collect()
+        # for row in dataColl:
+        #     print(row)
 
         output = input_data.mapPartitionsWithIndex(self.process_warcs) \
             .reduceByKey(self.reduce_by_key_func)
