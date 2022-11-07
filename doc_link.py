@@ -30,15 +30,15 @@ class TagCountJob(CCSparkJob):
 
 
 if __name__ == '__main__':
-    spark = SparkSession.builder.master("local[8]") \
-        .appName("count_tags") \
-        .config("spark.driver.memory", "9g").getOrCreate()
-
-    spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
-    spark.conf.set("spark.sql.codegen.wholeStage", "false")
-    spark.conf.set("spark.sql.shuffle.partitions", "6")
-
-    spark.sparkContext.setLogLevel("ERROR")
+    # spark = SparkSession.builder.master("local[8]") \
+    #     .appName("count_tags") \
+    #     .config("spark.driver.memory", "9g").getOrCreate()
+    #
+    # spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
+    # spark.conf.set("spark.sql.codegen.wholeStage", "false")
+    # spark.conf.set("spark.sql.shuffle.partitions", "6")
+    #
+    # spark.sparkContext.setLogLevel("ERROR")
 
     job = TagCountJob()
     job.run()

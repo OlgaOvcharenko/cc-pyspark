@@ -181,6 +181,10 @@ class CCSparkJob(object):
 
         session = builder.getOrCreate()
 
+        # session.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
+        # session.conf.set("spark.sql.codegen.wholeStage", "false")
+        # session.conf.set("spark.sql.shuffle.partitions", "6")
+
         self.init_logging(self.args.log_level, session)
         self.init_accumulators(session)
 
