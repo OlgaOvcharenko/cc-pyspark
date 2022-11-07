@@ -10,6 +10,9 @@
 #SBATCH --job-name=spark-client
 
 #./get_data.sh
+
+module load jdk
+
 SPARK_HOME="../spark-on-euler/spark_home/spark-3.2.2-bin-hadoop3.2"
 
 master_file=$(ls -t ../spark-on-euler/logs/spark-%j/ | head -1)
