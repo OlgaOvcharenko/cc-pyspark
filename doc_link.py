@@ -11,8 +11,9 @@ class TagCountJob(CCSparkJob):
     """ Count doc files and their names in Common Crawl WARC files"""
 
     name = "doc_count"
-    # doc_patern = pattern = re.compile(b"((www|http:|https:)+[^\s]+[\w]\.(doc|docx))")
-    doc_pattern = re.compile(b"(('|\")(www|http:|https:)+[^\s]+[\w]\.(doc|docx)('|\"))")
+    # doc_pattern = pattern = re.compile(b"((www|http:|https:)+[^\s]+[\w]\.(doc|docx))")
+    # doc_pattern = re.compile(b"(('|\")(www|http:|https:)+[^\s]+[\w]\.(doc|docx)('|\"))")
+    doc_google_pattern = re.compile(b"(('|\")(www|http:|https:)+(docs\.google\.com/document)[^\s]+[\w]('|\"))")
 
     def process_record(self, record):
         if record.rec_type != 'response':
@@ -22,10 +23,10 @@ class TagCountJob(CCSparkJob):
             # skip non-HTML or unknown content types
             return
         data = record.content_stream().read()
-        counts = Counter(TagCountJob.doc_pattern.findall(data))
+        counts = Counter(TagCountJob.doc_google_pattern.findall(data))
         for tag, count in counts.items():
             tag = tag[0]
-            yield tag.decode('ascii').lower(), count
+            yield tag.decode('ascii').lower().replace("\"\\\"", "").replace("\'", "").replace("\"", ""), count
 
 
 if __name__ == '__main__':
