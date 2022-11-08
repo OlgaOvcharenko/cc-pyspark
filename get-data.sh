@@ -27,7 +27,7 @@ for data_type in warc wat wet; do
 
 	echo "Downloading sample ${data_type} file..."
 
-	file=$(gzip -dc $listing | head -5)
+	file=$(gzip -dc $listing | head -1)
 	mkdir -p $(dirname $file)
 	cd $(dirname $file)
 	wget --timestamping $BASE_URL/$file
