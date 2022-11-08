@@ -10,6 +10,9 @@
 #SBATCH --job-name=spark-client
 
 #./get_data.sh
+mkdir -p tmp
+mkdir -p logs
+
 source "python_venv/bin/activate"
 
 module load jdk
@@ -21,10 +24,6 @@ master_file=$(ls -t ../spark-on-euler/logs/spark-%j/ | head -1)
 
 url_master=$(cat ../spark-on-euler/logs/spark-%j/$master_file)
 
-mkdir -p tmp
-
-mkdir -p logs
-
 $SPARK_HOME/bin/spark-submit \
            --conf "spark.local.dir=tmp" \
            --master $url_master \
@@ -32,6 +31,8 @@ $SPARK_HOME/bin/spark-submit \
            --executor-memory 20g \
            --deploy-mode client \
            --py-files sparkcc.py,libs.zip \
+           --archives python_venv.zip \
+           --conf spark.yarn.appMasterEnv.PYSPARK_PYTHON=python_venv/bin/python \
            doc_link.py \
            --num_output_partitions 1 \
            --log_level ERROR \
