@@ -30,7 +30,7 @@ $SPARK_HOME/bin/spark-submit \
            --driver-memory 20g \
            --executor-memory 20g \
            doc_link.py \
-           --num_output_partitions 3 \
+           --num_output_partitions 1 \
            --log_level ERROR \
            --output_format csv \
            --output_compression None \
