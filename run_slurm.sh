@@ -30,6 +30,7 @@ $SPARK_HOME/bin/spark-submit \
            --driver-memory 20g \
            --executor-memory 20g \
            --deploy-mode client \
+           --py-files sparkcc.py, cc_index_export.py\
            doc_link.py \
            --num_output_partitions 1 \
            --log_level ERROR \
