@@ -29,6 +29,7 @@ $SPARK_HOME/bin/spark-submit \
            --master $url_master \
            --driver-memory 20g \
            --executor-memory 20g \
+           --deploy-mode client \
            doc_link.py \
            --num_output_partitions 1 \
            --log_level ERROR \

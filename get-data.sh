@@ -27,20 +27,23 @@ for data_type in warc wat wet; do
 
 	echo "Downloading sample ${data_type} file..."
 
-	file=$(gzip -dc $listing | head -1)
-	mkdir -p $(dirname $file)
-	cd $(dirname $file)
-	wget --timestamping $BASE_URL/$file
-	cd -
+#	file=$(gzip -dc $listing | head -1)
+	files=$(gzip -dc $listing | head -3)
+	for (file in files); do
+	    mkdir -p $(dirname $file)
+      cd $(dirname $file)
+      wget --timestamping $BASE_URL/$file
+      cd -
 
-	echo "Writing input file listings..."
+      echo "Writing input file listings..."
 
-	input=input/test_${data_type}.txt
-	echo "Test file: $input"
-	echo file:$PWD/$file >>$input
+      input=input/test_${data_type}.txt
+      echo "Test file: $input"
+      echo file:$PWD/$file >>$input
 
-	input=input/all_${data_type}_${CRAWL}.txt
-	echo "All ${data_type} files of ${CRAWL}: $input"
-	gzip -dc $listing >$input
+      input=input/all_${data_type}_${CRAWL}.txt
+      echo "All ${data_type} files of ${CRAWL}: $input"
+      gzip -dc $listing >$input
+	done
 
 done
