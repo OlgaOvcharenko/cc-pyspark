@@ -24,11 +24,12 @@ mkdir -p tmp
 
 mkdir -p logs
 
-$SPARK_HOME/bin/spark-submit doc_link.py \
+$SPARK_HOME/bin/spark-submit \
            --conf "spark.local.dir=tmp" \
            --master $url_master \
            --driver-memory 20g \
            --executor-memory 20g \
+           doc_link.py \
            --num_output_partitions 3 \
            --log_level ERROR \
            --output_format csv \
