@@ -1,5 +1,7 @@
 #!/bin/bash
 
+module load python/3.7.4
+
 if [[ ! -d "python_env" ]]; then
     echo "Created venv on $HOSTNAME"
 
