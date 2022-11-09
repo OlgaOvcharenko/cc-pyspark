@@ -12,8 +12,8 @@ class TagCountJob(CCSparkJob):
 
     name = "doc_count"
     # doc_pattern = pattern = re.compile(b"((www|http:|https:)+[^\s]+[\w]\.(doc|docx))")
-    # doc_pattern = re.compile(b"(('|\")(www|http:|https:)+[^\s]+[\w]\.(doc|docx)('|\"))")
-    doc_google_pattern = re.compile(b"(('|\")(www|http:|https:)+(docs\.google\.com/document)[^\s]+[\w]('|\"))")
+    doc_pattern = re.compile(b"(('|\")(www|http:|https:)+[^\s]+[\w]\.(doc|docx)('|\"))")
+    # doc_google_pattern = re.compile(b"(('|\")(www|http:|https:)+(docs\.google\.com/document)[^\s]+[\w]('|\"))")
 
     def process_record(self, record):
         if record.rec_type != 'response':
