@@ -1,0 +1,53 @@
+22/11/10 00:16:39 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
+22/11/10 00:16:41 INFO SparkContext: Running Spark version 3.2.2
+22/11/10 00:16:41 WARN SparkConf: Note that spark.local.dir will be overridden by the value set by the cluster manager (via SPARK_LOCAL_DIRS in mesos/standalone/kubernetes and LOCAL_DIRS in YARN).
+22/11/10 00:16:41 INFO ResourceUtils: ==============================================================
+22/11/10 00:16:41 INFO ResourceUtils: No custom resources configured for spark.driver.
+22/11/10 00:16:41 INFO ResourceUtils: ==============================================================
+22/11/10 00:16:41 INFO SparkContext: Submitted application: doc_count
+22/11/10 00:16:41 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 20480, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+22/11/10 00:16:41 INFO ResourceProfile: Limiting resource is cpu
+22/11/10 00:16:41 INFO ResourceProfileManager: Added ResourceProfile id: 0
+22/11/10 00:16:41 INFO SecurityManager: Changing view acls to: oovcharenko
+22/11/10 00:16:41 INFO SecurityManager: Changing modify acls to: oovcharenko
+22/11/10 00:16:41 INFO SecurityManager: Changing view acls groups to: 
+22/11/10 00:16:41 INFO SecurityManager: Changing modify acls groups to: 
+22/11/10 00:16:41 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users  with view permissions: Set(oovcharenko); groups with view permissions: Set(); users  with modify permissions: Set(oovcharenko); groups with modify permissions: Set()
+22/11/10 00:16:41 INFO Utils: Successfully started service 'sparkDriver' on port 40373.
+22/11/10 00:16:41 INFO SparkEnv: Registering MapOutputTracker
+22/11/10 00:16:41 INFO SparkEnv: Registering BlockManagerMaster
+22/11/10 00:16:41 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+22/11/10 00:16:41 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+22/11/10 00:16:41 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+22/11/10 00:16:41 INFO DiskBlockManager: Created local directory at /cluster/scratch/oovcharenko/cc-pyspark/tmp/blockmgr-7fb30d51-ec3a-434c-8b35-7393ad0cf180
+22/11/10 00:16:41 INFO MemoryStore: MemoryStore started with capacity 10.5 GiB
+22/11/10 00:16:41 INFO SparkEnv: Registering OutputCommitCoordinator
+22/11/10 00:16:41 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+22/11/10 00:16:42 INFO SparkUI: Bound SparkUI to 0.0.0.0, and started at http://eu-a2p-495.euler.ethz.ch:4040
+22/11/10 00:16:42 INFO SparkContext: Added file file:///cluster/scratch/oovcharenko/cc-pyspark/sparkcc.py at spark://eu-a2p-495.euler.ethz.ch:40373/files/sparkcc.py with timestamp 1668035801078
+22/11/10 00:16:42 INFO Utils: Copying /cluster/scratch/oovcharenko/cc-pyspark/sparkcc.py to /cluster/scratch/oovcharenko/cc-pyspark/tmp/spark-a43d57f7-41a2-4db3-99d1-e552260e6809/userFiles-7ffc78ff-cfd5-4d5f-81fb-0bca71155623/sparkcc.py
+22/11/10 00:16:42 INFO SparkContext: Added file file:///cluster/scratch/oovcharenko/cc-pyspark/libs.zip at spark://eu-a2p-495.euler.ethz.ch:40373/files/libs.zip with timestamp 1668035801078
+22/11/10 00:16:42 INFO Utils: Copying /cluster/scratch/oovcharenko/cc-pyspark/libs.zip to /cluster/scratch/oovcharenko/cc-pyspark/tmp/spark-a43d57f7-41a2-4db3-99d1-e552260e6809/userFiles-7ffc78ff-cfd5-4d5f-81fb-0bca71155623/libs.zip
+22/11/10 00:16:42 INFO SparkContext: Added archive file:///cluster/scratch/oovcharenko/cc-pyspark/python_venv.zip at spark://eu-a2p-495.euler.ethz.ch:40373/files/python_venv.zip with timestamp 1668035801078
+22/11/10 00:16:42 INFO Utils: Copying /cluster/scratch/oovcharenko/cc-pyspark/python_venv.zip to /tmp/spark-c46a26f7-e253-4298-9c14-9d17286c0770/python_venv.zip
+22/11/10 00:16:42 INFO SparkContext: Unpacking an archive file:///cluster/scratch/oovcharenko/cc-pyspark/python_venv.zip from /tmp/spark-c46a26f7-e253-4298-9c14-9d17286c0770/python_venv.zip to /cluster/scratch/oovcharenko/cc-pyspark/tmp/spark-a43d57f7-41a2-4db3-99d1-e552260e6809/userFiles-7ffc78ff-cfd5-4d5f-81fb-0bca71155623/python_venv.zip
+22/11/10 00:17:12 INFO StandaloneAppClient$ClientEndpoint: Connecting to master spark://eu-a2p-061:7077...
+22/11/10 00:17:12 INFO TransportClientFactory: Successfully created connection to eu-a2p-061/10.205.176.71:7077 after 54 ms (0 ms spent in bootstraps)
+22/11/10 00:17:12 INFO StandaloneSchedulerBackend: Connected to Spark cluster with app ID app-20221110001712-0000
+22/11/10 00:17:12 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 45406.
+22/11/10 00:17:12 INFO NettyBlockTransferService: Server created on eu-a2p-495.euler.ethz.ch:45406
+22/11/10 00:17:12 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+22/11/10 00:17:12 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, eu-a2p-495.euler.ethz.ch, 45406, None)
+22/11/10 00:17:12 INFO BlockManagerMasterEndpoint: Registering block manager eu-a2p-495.euler.ethz.ch:45406 with 10.5 GiB RAM, BlockManagerId(driver, eu-a2p-495.euler.ethz.ch, 45406, None)
+22/11/10 00:17:12 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, eu-a2p-495.euler.ethz.ch, 45406, None)
+22/11/10 00:17:12 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, eu-a2p-495.euler.ethz.ch, 45406, None)
+22/11/10 00:17:12 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20221110001712-0000/0 on worker-20221110001626-10.205.176.74-40922 (10.205.176.74:40922) with 24 core(s)
+22/11/10 00:17:12 INFO StandaloneSchedulerBackend: Granted executor ID app-20221110001712-0000/0 on hostPort 10.205.176.74:40922 with 24 core(s), 20.0 GiB RAM
+22/11/10 00:17:12 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20221110001712-0000/1 on worker-20221110001626-10.205.176.72-34972 (10.205.176.72:34972) with 24 core(s)
+22/11/10 00:17:12 INFO StandaloneSchedulerBackend: Granted executor ID app-20221110001712-0000/1 on hostPort 10.205.176.72:34972 with 24 core(s), 20.0 GiB RAM
+22/11/10 00:17:12 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20221110001712-0000/0 is now RUNNING
+22/11/10 00:17:12 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20221110001712-0000/1 is now RUNNING
+22/11/10 00:17:12 INFO StandaloneSchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.0
+22/11/10 00:17:12 INFO SharedState: Setting hive.metastore.warehouse.dir ('null') to the value of spark.sql.warehouse.dir.
+22/11/10 00:17:12 INFO SharedState: Warehouse path is 'file:/cluster/scratch/oovcharenko/cc-pyspark/spark-warehouse'.

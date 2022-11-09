@@ -19,3 +19,6 @@ input/
 libs.zip
 python_venv.zip
 python_venv/
+
+logs/
+
