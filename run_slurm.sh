@@ -20,9 +20,9 @@ module load python/3.7.4
 
 SPARK_HOME="../spark-on-euler/spark_home/spark-3.2.2-bin-hadoop3.2"
 
-master_file=$(ls -t ../spark-on-euler/logs/spark-%j/ | head -1)
+master_file=$(ls -t ../spark-on-euler/logs/spark-master/ | head -1)
 
-url_master=$(cat ../spark-on-euler/logs/spark-%j/$master_file)
+url_master=$(cat ../spark-on-euler/logs/spark-master/$master_file)
 
 $SPARK_HOME/bin/spark-submit \
            --conf "spark.local.dir=tmp" \
