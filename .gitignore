@@ -12,9 +12,10 @@ __pycache__
 .idea_modules/
 
 # default output folder when running/testing locally
-spark-warehouse/
 
 # get-data.sh puts data into
 crawl-data/
 input/
 libs.zip
+python_venv.zip
+python_venv/
