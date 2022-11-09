@@ -23,7 +23,7 @@ class TagCountJob(CCSparkJob):
             # skip non-HTML or unknown content types
             return
         data = record.content_stream().read()
-        counts = Counter(TagCountJob.doc_google_pattern.findall(data))
+        counts = Counter(TagCountJob.doc_pattern.findall(data))
         for tag, count in counts.items():
             tag = tag[0]
             yield tag.decode('ascii').lower().replace("\"\\\"", "").replace("\'", "").replace("\"", ""), count
