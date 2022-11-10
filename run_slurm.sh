@@ -34,8 +34,8 @@ $SPARK_HOME/bin/spark-submit \
            --archives python_venv.zip \
            --conf spark.yarn.appMasterEnv.PYSPARK_PYTHON=python_venv/bin/python \
            doc_link.py \
-           --num_output_partitions 1 \
+           --num_output_partitions 1000 \
            --log_level ERROR \
-           --output_format csv \
+           --output_format parquet \
            --output_compression None \
            ./input/test_warc.txt docs
