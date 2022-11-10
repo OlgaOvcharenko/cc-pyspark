@@ -3,7 +3,7 @@
 CRAWL=CC-MAIN-2017-13
 
 # number of links if local, 0 - whole dump
-nlinks=1
+nlinks=0
 
 # base URL used to download the path listings
 BASE_URL=https://data.commoncrawl.org
