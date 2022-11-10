@@ -2,6 +2,9 @@
 
 CRAWL=CC-MAIN-2017-13
 
+# number of links if local, 0 - whole dump
+nlinks=1
+
 # base URL used to download the path listings
 BASE_URL=https://data.commoncrawl.org
 
@@ -28,8 +31,16 @@ for data_type in warc wat wet; do
 	echo "Downloading sample ${data_type} file..."
 
 #	file=$(gzip -dc $listing | head -1)
-	files=$(gzip -dc $listing | head -3)
-	for (file in files); do
+	files=$(gzip -dc $listing | head -$nlinks)
+	if [ $nlinks -eq 0 ]
+	then
+	  files=$(gzip -dc $listing)
+	else
+    files=$(gzip -dc $listing | head -$nlinks)
+  fi
+
+	for file in $files
+	do
 	    mkdir -p $(dirname $file)
       cd $(dirname $file)
       wget --timestamping $BASE_URL/$file
