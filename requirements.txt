@@ -15,5 +15,6 @@ lxml
 #pydoop
 
 # to check links
-urllib
+urllib3
 httplib2
+
