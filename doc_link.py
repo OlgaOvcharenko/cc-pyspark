@@ -1,4 +1,5 @@
 import re
+from time import sleep
 from urllib.request import urlopen, Request
 from collections import Counter
 import requests
@@ -27,16 +28,21 @@ class TagCountJob(CCSparkJob):
         counts = Counter(TagCountJob.doc_pattern.findall(data))
         for tag, count in counts.items():
             tag = tag[0]
-            url = tag.decode('ascii').lower().replace("\"\\\"", "").replace("\'", "").replace("\"", "")
-            h = httplib2.Http()
-            resp = h.request(url, 'HEAD')
-            if int(resp[0]['status']) < 400:
-                req = Request(url=url)
-                resp = urlopen(req, timeout=3)
-                redirected = resp.geturl() != url
+            url = tag.decode('utf-8').lower().replace("\"\\\"", "").replace("\'", "").replace("\"", "")
 
-                if not redirected:
-                    yield url, count
+            try:
+                h = httplib2.Http()
+                resp = h.request(url, 'HEAD')
+                if int(resp[0]['status']) < 400:
+                    req = Request(url=url)
+                    resp = urlopen(req, timeout=3)
+                    redirected = resp.geturl() != url
+
+                    if not redirected:
+                        yield url, count
+
+            except Exception:
+                pass
 
 
 if __name__ == '__main__':
