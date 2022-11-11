@@ -16,8 +16,6 @@ __pycache__
 # get-data.sh puts data into
 crawl-data/
 input/
-libs.zip
-python_venv.zip
 python_venv/
 
 logs/
