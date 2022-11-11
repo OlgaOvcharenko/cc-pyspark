@@ -36,9 +36,10 @@ class TagCountJob(CCSparkJob):
                 if int(resp[0]['status']) < 400:
                     req = Request(url=url)
                     resp = urlopen(req, timeout=3)
-                    redirected = resp.geturl() != url
+                    not_redirected = resp.geturl().endswith(".doc") or resp.geturl().endswith(".docx") \
+                        if resp.geturl() != url else True
 
-                    if not redirected:
+                    if not_redirected:
                         yield url, count
 
             except Exception:
@@ -46,15 +47,5 @@ class TagCountJob(CCSparkJob):
 
 
 if __name__ == '__main__':
-    # spark = SparkSession.builder.master("local[8]") \
-    #     .appName("count_tags") \
-    #     .config("spark.driver.memory", "9g").getOrCreate()
-    #
-    # spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
-    # spark.conf.set("spark.sql.codegen.wholeStage", "false")
-    # spark.conf.set("spark.sql.shuffle.partitions", "6")
-    #
-    # spark.sparkContext.setLogLevel("ERROR")
-
     job = TagCountJob()
     job.run()
