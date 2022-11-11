@@ -13,3 +13,7 @@ lxml
 
 # for HDFS support (requires environments variables JAVA_HOME and HADOOP_HOME):
 #pydoop
+
+# to check links
+urllib
+httplib2

@@ -1,10 +1,8 @@
 import re
-from time import sleep
-from urllib.request import urlopen, Request
 from collections import Counter
-import requests
+from urllib.request import urlopen, Request
+
 import httplib2
-from pyspark.sql import SparkSession
 
 from sparkcc import CCSparkJob
 
