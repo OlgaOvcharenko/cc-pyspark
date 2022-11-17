@@ -1,5 +1,14 @@
 #!/bin/sh
 
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=24
+#SBATCH --output="logs/get_data.out"
+#SBATCH --error="logs/get_data.err"
+#SBATCH --time=24:00:00
+#SBATCH --job-name=spark-client
+
 CRAWL=CC-MAIN-2017-13
 
 # number of links if local, 0 - whole dump
