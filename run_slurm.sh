@@ -9,7 +9,7 @@
 #SBATCH --time=24:00:00
 #SBATCH --job-name=spark-client
 
-./get_data.sh
+#./get_data.sh
 
 mkdir -p tmp
 mkdir -p logs

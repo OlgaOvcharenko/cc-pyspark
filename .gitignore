@@ -21,3 +21,8 @@ python_venv/
 logs/
 
 tmp/
+
+__pycache__/
+
+libs.zip
+python_venv.zip
