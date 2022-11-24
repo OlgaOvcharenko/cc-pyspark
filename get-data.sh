@@ -9,7 +9,7 @@
 #SBATCH --time=24:00:00
 #SBATCH --job-name=spark-client
 
-CRAWL=CC-MAIN-2017-13
+CRAWL=CC-MAIN-2022-33
 
 # number of links if local, 0 - whole dump
 nlinks=0
@@ -40,7 +40,7 @@ for data_type in warc wat wet; do
 	echo "Downloading sample ${data_type} file..."
 
 #	file=$(gzip -dc $listing | head -1)
-	files=$(gzip -dc $listing | head -$nlinks)
+#	files=$(gzip -dc $listing | head -$nlinks)
 	if [ $nlinks -eq 0 ]
 	then
 	  files=$(gzip -dc $listing)
