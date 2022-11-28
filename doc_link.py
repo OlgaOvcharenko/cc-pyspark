@@ -29,19 +29,35 @@ class TagCountJob(CCSparkJob):
             url = tag.decode('utf-8').lower().replace("\"\\\"", "").replace("\'", "").replace("\"", "")
 
             try:
-                h = httplib2.Http()
-                resp = h.request(url, 'HEAD')
-                if int(resp[0]['status']) < 400:
-                    req = Request(url=url)
-                    resp = urlopen(req, timeout=3)
-                    not_redirected = resp.geturl().endswith(".doc") or resp.geturl().endswith(".docx") \
-                        if resp.geturl() != url else True
+                # h = httplib2.Http()
+                # resp = h.request(url, 'HEAD')
+                # if int(resp[0]['status']) < 400:
 
-                    if not_redirected:
-                        yield url, count
+                req = Request(url=url)
+                resp = urlopen(req, timeout=1)
+                not_redirected = resp.geturl().endswith(".doc") or resp.geturl().endswith(".docx") \
+                    if resp.geturl() != url else True
+
+                if not_redirected:
+                    yield url, count
 
             except Exception:
                 pass
+
+            # try:
+            #     h = httplib2.Http()
+            #     resp = h.request(url, 'HEAD')
+            #     if int(resp[0]['status']) < 400:
+            #         req = Request(url=url)
+            #         resp = urlopen(req, timeout=3)
+            #         not_redirected = resp.geturl().endswith(".doc") or resp.geturl().endswith(".docx") \
+            #             if resp.geturl() != url else True
+            #
+            #         if not_redirected:
+            #             yield url, count
+            #
+            # except Exception:
+            #     pass
 
 
 if __name__ == '__main__':

@@ -57,7 +57,6 @@ class CCSparkJob(object):
     # pattern to split a data URL (<scheme>://<netloc>/<path> or <scheme>:/<path>)
     data_url_pattern = re.compile('^(s3|https?|file|hdfs):(?://([^/]*))?/(.*)')
 
-
     def parse_arguments(self):
         """Returns the parsed arguments from the command line"""
 
@@ -147,7 +146,6 @@ class CCSparkJob(object):
         if session:
             session.sparkContext.setLogLevel(level)
 
-
     def init_accumulators(self, session):
         """Register and initialize counters (aka. accumulators).
            Derived classes may use this method to add their own
@@ -190,8 +188,8 @@ class CCSparkJob(object):
 
         self.run_job(session)
 
-        if self.args.spark_profiler:
-            session.sparkContext.show_profiles()
+        # if self.args.spark_profiler:
+        #     session.sparkContext.show_profiles()
 
         session.stop()
 
@@ -219,11 +217,13 @@ class CCSparkJob(object):
         # for row in dataColl:
         #     print(row)
 
+        print(input_data.getNumPartitions())
+
         output = input_data.mapPartitionsWithIndex(self.process_warcs) \
             .reduceByKey(self.reduce_by_key_func)
 
+        # .coalesce(self.args.num_output_partitions) \
         session.createDataFrame(output, schema=self.output_schema) \
-            .coalesce(self.args.num_output_partitions) \
             .write \
             .format(self.args.output_format) \
             .option("compression", self.args.output_compression) \
@@ -412,197 +412,3 @@ class CCSparkJob(object):
                 if html_type in content_type:
                     return True
         return False
-
-
-class CCIndexSparkJob(CCSparkJob):
-    """
-    Process the Common Crawl columnar URL index
-    """
-
-    name = "CCIndexSparkJob"
-
-    # description of input and output shown in --help
-    input_descr = "Path to Common Crawl index table"
-
-    def add_arguments(self, parser):
-        parser.add_argument("--table", default="ccindex",
-                            help="name of the table data is loaded into"
-                            " (default: ccindex)")
-        parser.add_argument("--query", default=None, required=True,
-                            help="SQL query to select rows (required).")
-        parser.add_argument("--table_schema", default=None,
-                            help="JSON schema of the ccindex table,"
-                            " implied from Parquet files if not provided.")
-
-    def load_table(self, session, table_path, table_name):
-        parquet_reader = session.read.format('parquet')
-        if self.args.table_schema is not None:
-            self.get_logger(session).info(
-                "Reading table schema from {}".format(self.args.table_schema))
-            with open(self.args.table_schema, 'r') as s:
-                schema = StructType.fromJson(json.loads(s.read()))
-            parquet_reader = parquet_reader.schema(schema)
-        df = parquet_reader.load(table_path)
-        df.createOrReplaceTempView(table_name)
-        self.get_logger(session).info(
-            "Schema of table {}:\n{}".format(table_name, df.schema))
-
-    def execute_query(self, session, query):
-        sqldf = session.sql(query)
-        self.get_logger(session).info("Executing query: {}".format(query))
-        sqldf.explain()
-        return sqldf
-
-    def load_dataframe(self, session, partitions=-1):
-        self.load_table(session, self.args.input, self.args.table)
-        sqldf = self.execute_query(session, self.args.query)
-        sqldf.persist()
-
-        num_rows = sqldf.count()
-        self.get_logger(session).info(
-            "Number of records/rows matched by query: {}".format(num_rows))
-
-        if partitions > 0:
-            self.get_logger(session).info(
-                "Repartitioning data to {} partitions".format(partitions))
-            sqldf = sqldf.repartition(partitions)
-            sqldf.persist()
-
-        return sqldf
-
-    def run_job(self, session):
-        sqldf = self.load_dataframe(session, self.args.num_output_partitions)
-
-        sqldf.write \
-            .format(self.args.output_format) \
-            .option("compression", self.args.output_compression) \
-            .options(**self.get_output_options()) \
-            .saveAsTable(self.args.output)
-
-        self.log_accumulators(session)
-
-
-class CCIndexWarcSparkJob(CCIndexSparkJob):
-    """
-    Process Common Crawl data (WARC records) found by the columnar URL index
-    """
-
-    name = "CCIndexWarcSparkJob"
-
-    input_descr = "Path to Common Crawl index table (with option `--query`)" \
-                  " or extracted table containing WARC record coordinates"
-
-    def add_arguments(self, parser):
-        super(CCIndexWarcSparkJob, self).add_arguments(parser)
-        agroup = parser.add_mutually_exclusive_group(required=True)
-        agroup.add_argument("--query", default=None,
-                            help="SQL query to select rows. Note: the result "
-                            "is required to contain the columns `url', `warc"
-                            "_filename', `warc_record_offset' and `warc_record"
-                            "_length', make sure they're SELECTed. The column "
-                            "`content_charset' is optional and is utilized to "
-                            "read WARC record payloads with the right encoding.")
-        agroup.add_argument("--csv", default=None,
-                            help="CSV file to load WARC records by filename, "
-                            "offset and length. The CSV file must have column "
-                            "headers and the input columns `url', "
-                            "`warc_filename', `warc_record_offset' and "
-                            "`warc_record_length' are mandatory, see also "
-                            "option --query.\nDeprecated, use instead "
-                            "`--input_table_format csv` together with "
-                            "`--input_table_option header=True` and "
-                            "`--input_table_option inferSchema=True`.")
-        agroup.add_argument("--input_table_format", default=None,
-                            help="Data format of the input table to load WARC "
-                            "records by filename, offset and length. The input "
-                            "table is read from the path <input> and is expected "
-                            "to include the columns `url', `warc_filename', "
-                            "`warc_record_offset' and `warc_record_length'. The "
-                            "input table is typically a result of a CTAS query "
-                            "(create table as).  Allowed formats are: orc, "
-                            "json lines, csv, parquet and other formats "
-                            "supported by Spark.")
-        parser.add_argument("--input_table_option", action='append', default=[],
-                            help="Additional input option when reading data from "
-                            "an input table (see `--input_table_format`). Options "
-                            "are passed to the Spark DataFrameReader.")
-
-    def get_input_table_options(self):
-        return {x[0]: x[1] for x in map(lambda x: x.split('=', 1),
-                                        self.args.input_table_option)}
-
-    def load_dataframe(self, session, partitions=-1):
-        if self.args.query is not None:
-            return super(CCIndexWarcSparkJob, self).load_dataframe(session, partitions)
-
-        if self.args.csv is not None:
-            sqldf = session.read.format("csv").option("header", True) \
-                .option("inferSchema", True).load(self.args.csv)
-        elif self.args.input_table_format is not None:
-            data_format = self.args.input_table_format
-            reader = session.read.format(data_format)
-            reader = reader.options(**self.get_input_table_options())
-            sqldf = reader.load(self.args.input)
-
-        if partitions > 0:
-            self.get_logger(session).info(
-                "Repartitioning data to {} partitions".format(partitions))
-            sqldf = sqldf.repartition(partitions)
-
-        sqldf.persist()
-
-        return sqldf
-
-    def process_record_with_row(self, record, row):
-        """Process a single WARC record and the corresponding table row."""
-        if 'content_charset' in row:
-            # pass `content_charset` forward to subclass processing WARC records
-            record.rec_headers['WARC-Identified-Content-Charset'] = row['content_charset']
-        for res in self.process_record(record):
-            yield res
-
-    def fetch_process_warc_records(self, rows):
-        """Fetch and process WARC records specified by columns warc_filename, 
-        warc_record_offset and warc_record_length in rows"""
-
-        no_parse = (not self.warc_parse_http_header)
-
-        for row in rows:
-            url = row['url']
-            warc_path = row['warc_filename']
-            offset = int(row['warc_record_offset'])
-            length = int(row['warc_record_length'])
-            self.get_logger().debug("Fetching WARC record for {}".format(url))
-            record_stream = self.fetch_warc(warc_path, self.args.input_base_url, offset, length)
-            try:
-                for record in ArchiveIterator(record_stream,
-                                              no_record_parse=no_parse):
-                    for res in self.process_record_with_row(record, row):
-                        yield res
-                    self.records_processed.add(1)
-            except ArchiveLoadFailed as exception:
-                self.warc_input_failed.add(1)
-                self.get_logger().error(
-                    'Invalid WARC record: {} ({}, offset: {}, length: {}) - {}'
-                    .format(url, warc_path, offset, length, exception))
-
-    def run_job(self, session):
-        sqldf = self.load_dataframe(session, self.args.num_input_partitions)
-
-        columns = ['url', 'warc_filename', 'warc_record_offset', 'warc_record_length']
-        if 'content_charset' in sqldf.columns:
-            columns.append('content_charset')
-        warc_recs = sqldf.select(*columns).rdd
-
-        output = warc_recs.mapPartitions(self.fetch_process_warc_records) \
-            .reduceByKey(self.reduce_by_key_func)
-
-        session.createDataFrame(output, schema=self.output_schema) \
-            .coalesce(self.args.num_output_partitions) \
-            .write \
-            .format(self.args.output_format) \
-            .option("compression", self.args.output_compression) \
-            .options(**self.get_output_options()) \
-            .saveAsTable(self.args.output)
-
-        self.log_accumulators(session)

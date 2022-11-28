@@ -26,3 +26,5 @@ __pycache__/
 
 libs.zip
 python_venv.zip
+
+.DS_Store
