@@ -39,4 +39,5 @@ $SPARK_HOME/bin/spark-submit \
            --log_level ERROR \
            --output_format parquet \
            --output_compression None \
-           ./input/test_warc.txt docs
+           ./input/test_warc.txt docs_13_2017
+
