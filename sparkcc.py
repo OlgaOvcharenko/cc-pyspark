@@ -1,5 +1,6 @@
 import argparse
 import json
+from pyspark.sql.functions import spark_partition_id, asc, desc
 import logging
 import os
 import re
@@ -50,6 +51,9 @@ class CCSparkJob(object):
     num_input_partitions = 400
     num_output_partitions = 10
 
+    nstep = 50
+    nrows = 100
+
     # S3 client is thread-safe, cf.
     # https://boto3.amazonaws.com/v1/documentation/api/latest/guide/clients.html#multithreading-or-multiprocessing-with-clients)
     s3client = None
@@ -80,6 +84,12 @@ class CCSparkJob(object):
                                 help="Number of input splits/partitions, "
                                 "number of parallel tasks to process WARC "
                                 "files/records")
+        arg_parser.add_argument("--nstep", type=int,
+                                default=self.nstep,
+                                help="Number of input steps")
+        arg_parser.add_argument("--nrows", type=int,
+                                default=self.nrows,
+                                help="Number of rows")
         arg_parser.add_argument("--num_output_partitions", type=int,
                                 default=self.num_output_partitions,
                                 help="Number of output partitions")
@@ -211,26 +221,46 @@ class CCSparkJob(object):
         return a + b
 
     def run_job(self, session):
-        input_data = session.sparkContext.textFile(self.args.input,
+        input_data_original = session.sparkContext.textFile(self.args.input,
                                                    minPartitions=self.args.num_input_partitions)
-        # dataColl = input_data.collect()
-        # for row in dataColl:
-        #     print(row)
 
-        print(input_data.getNumPartitions())
+        ids_segment = input_data_original.map(lambda k: k.split('/')[-3]).distinct().collect()
 
-        output = input_data.mapPartitionsWithIndex(self.process_warcs) \
-            .reduceByKey(self.reduce_by_key_func)
+        for id in ids_segment:
 
-        # .coalesce(self.args.num_output_partitions) \
-        session.createDataFrame(output, schema=self.output_schema) \
-            .write \
-            .format(self.args.output_format) \
-            .option("compression", self.args.output_compression) \
-            .options(**self.get_output_options()) \
-            .saveAsTable(self.args.output)
+            for beg in range(0, self.args.nrows, self.args.nstep):
+                # input_data.map(lambda x: (x, )).toDF().withColumn("partitionId", spark_partition_id()) \
+                #     .groupBy("partitionId") \
+                #     .count() \
+                #     .orderBy(asc("count")) \
+                #     .show()
+                end = beg + self.args.nstep
+                input_data = input_data_original.filter(
+                    lambda k: id in k and beg <= int(k.split('/')[-1].split('-')[-1].replace('.warc.gz', '')) < end)
 
-        self.log_accumulators(session)
+                input_data = input_data.filter(lambda k: k)
+
+                output = input_data.mapPartitionsWithIndex(self.process_warcs)
+
+                # output.toDF().withColumn("partitionId", spark_partition_id()) \
+                #     .groupBy("partitionId") \
+                #     .count() \
+                #     .orderBy(asc("count")) \
+                #     .show()
+                output = output.repartition(self.num_input_partitions)\
+                    .reduceByKey(self.reduce_by_key_func)
+
+                session.createDataFrame(output, schema=self.output_schema) \
+                    .coalesce(self.args.num_output_partitions) \
+                    .write \
+                    .format(self.args.output_format) \
+                    .option("compression", self.args.output_compression) \
+                    .options(**self.get_output_options()) \
+                    .saveAsTable(self.args.output + '_' + str(id.replace('.', '')) + '_' + str(beg) + '_' + str(end))
+
+                self.log_accumulators(session)
+
+                beg = end
 
     def get_s3_client(self):
         if not self.s3client:

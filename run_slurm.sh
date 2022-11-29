@@ -25,6 +25,8 @@ master_file=$(ls -t ../spark-on-euler/logs/spark-master/ | head -1)
 
 url_master=$(cat ../spark-on-euler/logs/spark-master/$master_file)
 
+nrows=$(wc -l < input/test_warc.txt | xargs)
+
 $SPARK_HOME/bin/spark-submit \
            --conf "spark.local.dir=tmp" \
            --master $url_master \
@@ -35,9 +37,11 @@ $SPARK_HOME/bin/spark-submit \
            --archives python_venv.zip \
            --conf spark.yarn.appMasterEnv.PYSPARK_PYTHON=python_venv/bin/python \
            doc_link.py \
-           --num_output_partitions 1000 \
+           --nstep 240 \
+           --nrows $nrows \
+           --num_output_partitions 1 \
            --log_level ERROR \
            --output_format parquet \
            --output_compression None \
-           ./input/test_warc.txt docs_13_2017
+           ./input/test_warc.txt docs_2017_mod
 

@@ -1,8 +1,7 @@
 import re
+import time
 from collections import Counter
 from urllib.request import urlopen, Request
-
-import httplib2
 
 from sparkcc import CCSparkJob
 
