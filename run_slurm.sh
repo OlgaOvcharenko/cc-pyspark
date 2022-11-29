@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=24
 #SBATCH --output="logs/%j-client.out"
 #SBATCH --error="logs/%j-client.err"
-#SBATCH --time=24:00:00
+#SBATCH --time=43:00:00
 #SBATCH --job-name=spark-client
 
 #./get_data.sh
