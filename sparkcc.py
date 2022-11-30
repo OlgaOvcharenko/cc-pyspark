@@ -227,14 +227,14 @@ class CCSparkJob(object):
         lines = [line.rstrip('\n') for line in f]
         print(lines)
 
-        lines = [1]
-
         # input_data_original = session.sparkContext.textFile(self.args.input,
         #                                                     minPartitions=self.args.num_input_partitions)
 
         input_data_original = session.sparkContext.parallelize(lines, numSlices=self.args.num_input_partitions)
 
-        ids_segment = input_data_original.write\
+        ids_segment = input_data_original.map(lambda x: (x, )).toDF() \
+            .coalesce(self.args.num_output_partitions) \
+            .write \
             .format(self.args.output_format) \
             .option("compression", self.args.output_compression) \
             .options(**self.get_output_options()) \
