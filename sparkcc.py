@@ -221,6 +221,9 @@ class CCSparkJob(object):
         return a + b
 
     def run_job(self, session):
+        print('Empty RDD ')
+        print(session.sparkContext.emptyRDD().collect())
+
         f = open(self.args.input, "r")
         print('Input files ')
         lines = [line.rstrip('\n') for line in f]
