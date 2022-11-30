@@ -234,7 +234,7 @@ class CCSparkJob(object):
 
         input_data_original = session.sparkContext.parallelize(lines, numSlices=self.args.num_input_partitions)
 
-        ids_segment = input_data_original.map(lambda k: k.split('/')[-3]).distinct().write\
+        ids_segment = input_data_original.write\
             .format(self.args.output_format) \
             .option("compression", self.args.output_compression) \
             .options(**self.get_output_options()) \
