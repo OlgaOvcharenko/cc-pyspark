@@ -34,7 +34,7 @@ $SPARK_HOME/bin/spark-submit \
            --executor-memory 20g \
            --deploy-mode client \
            --py-files sparkcc.py,libs.zip \
-           --archives python_venv.zip,input.zip \
+           --archives python_venv.zip \
            --conf spark.yarn.appMasterEnv.PYSPARK_PYTHON=python_venv/bin/python \
            doc_link.py \
            --nstep 2 \
