@@ -29,7 +29,7 @@ nrows=$(wc -l < input/6_test_warc.txt | xargs)
 
 $SPARK_HOME/bin/spark-submit \
 --class org.apache.spark.examples.SparkPi \
---master yarn \
+--master $url_master \
 --deploy-mode client \
 --driver-memory 1g \
 --executor-memory 1g \
