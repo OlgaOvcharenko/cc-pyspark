@@ -21,7 +21,7 @@ module load python/3.7.4
 
 SPARK_HOME="../spark-on-euler/spark_home/spark-3.2.2-bin-hadoop3.2"
 
-master_file=$(ls -t ../spark-on-euler/logs/spark-master/ | head -1)
+master_file=$(ls -I "spark-*" -I "app-*" -t ../spark-on-euler/logs/spark-master/ | head -1)
 
 url_master=$(cat ../spark-on-euler/logs/spark-master/$master_file)
 
@@ -34,7 +34,7 @@ $SPARK_HOME/bin/spark-submit \
            --executor-memory 20g \
            --deploy-mode client \
            --py-files sparkcc.py,libs.zip \
-           --archives python_venv.zip \
+           --archives python_venv.zip,input.zip \
            --conf spark.yarn.appMasterEnv.PYSPARK_PYTHON=python_venv/bin/python \
            doc_link.py \
            --nstep 2 \
