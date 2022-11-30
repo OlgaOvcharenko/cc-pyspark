@@ -1,6 +1,6 @@
 import argparse
 import json
-from pyspark.sql.functions import spark_partition_id, asc, desc
+from pyspark.sql.functions import spark_partition_id, asc, desc, lit
 import logging
 import os
 import re
@@ -221,24 +221,26 @@ class CCSparkJob(object):
         return a + b
 
     def run_job(self, session):
-        print('Empty RDD ')
-        print(session.sparkContext.emptyRDD().collect())
 
         f = open(self.args.input, "r")
         print('Input files ')
         lines = [line.rstrip('\n') for line in f]
         print(lines)
 
+        lines = [1]
+
         # input_data_original = session.sparkContext.textFile(self.args.input,
         #                                                     minPartitions=self.args.num_input_partitions)
 
         input_data_original = session.sparkContext.parallelize(lines, numSlices=self.args.num_input_partitions)
 
-        print(input_data_original.collect())
-        ids_segment = input_data_original.map(lambda k: k.split('/')[-3]).distinct().collect()
+        ids_segment = input_data_original.map(lambda k: k.split('/')[-3]).distinct().write\
+            .format(self.args.output_format) \
+            .option("compression", self.args.output_compression) \
+            .options(**self.get_output_options()) \
+            .saveAsTable(self.args.output + '_test')
 
-        print('Segments ')
-        print(ids_segment)
+        exit()
 
         for id in ids_segment:
 
