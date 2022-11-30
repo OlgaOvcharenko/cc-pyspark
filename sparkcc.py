@@ -229,11 +229,8 @@ class CCSparkJob(object):
         for id in ids_segment:
 
             for beg in range(0, self.args.nrows, self.args.nstep):
-                # input_data.map(lambda x: (x, )).toDF().withColumn("partitionId", spark_partition_id()) \
-                #     .groupBy("partitionId") \
-                #     .count() \
-                #     .orderBy(asc("count")) \
-                #     .show()
+                print('Start range')
+
                 end = beg + self.args.nstep
                 input_data = input_data_original.filter(
                     lambda k: id in k and beg <= int(k.split('/')[-1].split('-')[-1].replace('.warc.gz', '')) < end)
@@ -242,11 +239,6 @@ class CCSparkJob(object):
 
                 output = input_data.mapPartitionsWithIndex(self.process_warcs)
 
-                # output.toDF().withColumn("partitionId", spark_partition_id()) \
-                #     .groupBy("partitionId") \
-                #     .count() \
-                #     .orderBy(asc("count")) \
-                #     .show()
                 output = output.repartition(self.num_input_partitions)\
                     .reduceByKey(self.reduce_by_key_func)
 
@@ -261,6 +253,8 @@ class CCSparkJob(object):
                 self.log_accumulators(session)
 
                 beg = end
+
+                print('Finish range')
 
     def get_s3_client(self):
         if not self.s3client:
