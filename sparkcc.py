@@ -227,7 +227,7 @@ class CCSparkJob(object):
 
         input_data_original = session.sparkContext.textFile(self.args.input,
                                                             minPartitions=self.args.num_input_partitions)
-
+        print(input_data_original.collect())
         ids_segment = input_data_original.map(lambda k: k.split('/')[-3]).distinct().collect()
 
         print('Segments ')
