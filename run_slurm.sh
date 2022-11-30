@@ -19,7 +19,7 @@ source "python_venv/bin/activate"
 module load jdk
 module load python/3.7.4
 
-SPARK_HOME="../spark-on-euler/spark_home/spark-3.2.2-bin-hadoop3.2"
+SPARK_HOME="../spark-on-euler/spark_home/spark-3.2.3-bin-hadoop3.2"
 
 master_file=$(ls -I "spark-*" -I "app-*" -t ../spark-on-euler/logs/spark-master/ | head -1)
 
