@@ -12,7 +12,7 @@
 CRAWL=CC-MAIN-2022-33
 
 # number of links if local, 0 - whole dump
-nlinks=3
+nlinks=6
 
 # base URL used to download the path listings
 BASE_URL=https://data.commoncrawl.org
