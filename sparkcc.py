@@ -221,10 +221,17 @@ class CCSparkJob(object):
         return a + b
 
     def run_job(self, session):
+        f = open(self.args.input, "r")
+        print('Input files ')
+        print(f.read())
+
         input_data_original = session.sparkContext.textFile(self.args.input,
-                                                   minPartitions=self.args.num_input_partitions)
+                                                            minPartitions=self.args.num_input_partitions)
 
         ids_segment = input_data_original.map(lambda k: k.split('/')[-3]).distinct().collect()
+
+        print('Segments ')
+        print(ids_segment)
 
         for id in ids_segment:
 
