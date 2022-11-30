@@ -232,17 +232,11 @@ class CCSparkJob(object):
 
         input_data_original = session.sparkContext.parallelize(lines, numSlices=self.args.num_input_partitions)
 
-        input_data_original.saveAsTextFile('last_chance')
+        print(input_data_original.collect())
+        ids_segment = input_data_original.map(lambda k: k.split('/')[-3]).distinct().collect()
 
-        input_data_original.map(lambda x: (x, )).toDF() \
-            .coalesce(self.args.num_output_partitions) \
-            .write \
-            .format(self.args.output_format) \
-            .option("compression", self.args.output_compression) \
-            .options(**self.get_output_options()) \
-            .saveAsTable(self.args.output + '_test')
-
-        exit()
+        print('Segments ')
+        print(ids_segment)
 
         for id in ids_segment:
 
