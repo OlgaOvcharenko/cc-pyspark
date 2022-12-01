@@ -21,6 +21,22 @@ module load python/3.7.4
 
 SPARK_HOME="../spark-on-euler/spark_home/spark-3.2.3-bin-hadoop3.2"
 
+module load jdk
+module load python/3.7.4
+
+export sparkLogs=logs/spark-master
+export sparkTmp=tmp/spark-master
+mkdir -p "$sparkLogs" "$sparkTmp"
+
+export SPARK_ROOT=$(pwd)/spark_home/spark-3.2.3-bin-hadoop3.2
+export SPARK_HOME=$SPARK_ROOT
+export SPARK_WORKER_DIR=${sparkLogs}_${HOSTNAME}
+export SPARK_LOCAL_DIRS=${sparkLogs}_${HOSTNAME}
+export SPARK_MASTER_PORT=7077
+export SPARK_MASTER_WEBUI_PORT=8080
+export SPARK_WORKER_CORES=$SLURM_CPUS_PER_TASK
+export SPARK_DAEMON_MEMORY=2g
+
 master_file=$(ls -I "spark-*" -I "app-*" -t ../spark-on-euler/logs/spark-master/ | head -1)
 
 url_master=$(cat ../spark-on-euler/logs/spark-master/$master_file)
