@@ -221,7 +221,7 @@ class CCSparkJob(object):
         return a + b
 
     def run_job(self, session):
-
+        # session.sparkContext.emptyRDD()
         f = open(self.args.input, "r")
         print('Input files ')
         lines = [line.rstrip('\n') for line in f]
@@ -231,6 +231,10 @@ class CCSparkJob(object):
         #                                                     minPartitions=self.args.num_input_partitions)
 
         input_data_original = session.sparkContext.parallelize(lines, numSlices=self.args.num_input_partitions)
+
+        print("Hello")
+        print(session.sparkContext.emptyRDD().collect())
+        print("Hello")
 
         print(input_data_original.collect())
         ids_segment = input_data_original.map(lambda k: k.split('/')[-3]).distinct().collect()
