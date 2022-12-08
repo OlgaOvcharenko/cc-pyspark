@@ -19,6 +19,10 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, LongType
 
 
+import org.apache.log4j.Logger
+import org.apache.log4j.Level
+
+
 LOGGING_FORMAT = '%(asctime)s %(levelname)s %(name)s: %(message)s'
 
 
@@ -45,7 +49,7 @@ class CCSparkJob(object):
     records_processed = None
     warc_input_processed = None
     warc_input_failed = None
-    log_level = 'INFO'
+    log_level = 'ALL'
     logging.basicConfig(level=log_level, format=LOGGING_FORMAT)
 
     num_input_partitions = 400
@@ -153,6 +157,8 @@ class CCSparkJob(object):
             level = self.log_level
         logging.basicConfig(level=level, format=LOGGING_FORMAT)
         logging.getLogger(self.name).setLevel(level)
+        Logger.getLogger("org").setLevel(Level.ALL)
+        Logger.getLogger("akka").setLevel(Level.ALL)
         if session:
             session.sparkContext.setLogLevel(level)
 
