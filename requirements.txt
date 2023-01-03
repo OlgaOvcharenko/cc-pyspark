@@ -122,7 +122,6 @@ Keras-Applications==1.0.8
 Keras-Preprocessing==1.1.0
 kiwisolver==1.1.0
 kneaddata==0.10.0
-kopt==0.1.0
 librosa==0.7.0
 llvmlite==0.26.0
 locket==0.2.0
